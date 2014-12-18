@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Patience</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_warning">WarningActivity</string>
+    <string name="title_activity_contact">ContactActivity</string>
+    <string name="login">Login</string>
+    <string name="setting">setting</string>
+    <string name="TextView">TextView</string>
+    <string name="Start">Start</string>
+    <string name="Stop">Stop</string>
+    <string name="fell">Yes</string>
+    <string name="stand">No</string>
+    <string name="back">Back</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Submit">Submit</string>
+    <string name="contect">Enter contact</string>
+    <string name="lol">Set emergency contact</string>
+    <string name="swich">Detecting switch</string>
+    <string name="hint">Press to disable alarm</string>
+    <string name="call">Activate call out</string>
+    <string name="SMS">activate SMS</string>
+    <string name="switches">On/Off</string>
+    <string name="network">network function</string>
+    <string name="userhint_info">Type in your information</string>
+    <string name="name">"Name: "</string>
+    <string name="birth">"Birth: "</string>
+    <string name="height">"Height: "</string>
+    <string name="weight">"Weight: "</string>
+    <string name="next">NEXT</string>
+    <string name="title_activity_user_info">User_info</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="function">Test options</string>
+    <string name="title_activity_intermediate">Intermediate</string>
+    <string name="user">User information</string>
+    <string name="Contact">Change Contact</string>
+    <string name="reset">Reset</string>
+    <string name="count">count</string>
+    <string name="raw">raw</string>
+    <string name="title_activity_welcome">Welcome</string>
+    <string name="slide">Slide me!! It\'s fun!</string>
+    <string name="expand">------------Chart--------------</string>
+    <string name="update">Update</string>
+    <string name="version">Ver. 1.0</string>
+    <string name="updating">enable upload</string>
+    <string name="title_activity_pos">Settings</string>
+    <string name="set">Position</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="sex">Sex:</string>
+    <string name="Position">Position</string>
+    <string name="waist">Waist</string>
+    <string name="chest">Chest</string>
+    <string name="thigh">Thigh</string>
+    <string name="purse">Purse</string>
+
+</resources>

@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="asd">10dp</dimen>
+    <dimen name="mainframe">20dp</dimen>
+    <dimen name="big">24dp</dimen>
+    <dimen name="peep">80dp</dimen>
+    <dimen name="superr">160dp</dimen>
+    <dimen name="kjhg">320dp</dimen>
+
+</resources>
