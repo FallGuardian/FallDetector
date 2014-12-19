@@ -197,7 +197,8 @@ public class Web {
 						Log.i("God Damn Error: " , "in update");
 					}
 				}catch(Exception tt){
-					Log.i("Exceptions", "Internet failure");
+					Log.i("Exceptions", "internet error");
+					
 					tt.printStackTrace();
 				}
 				Log.i("Send End", "in update");
