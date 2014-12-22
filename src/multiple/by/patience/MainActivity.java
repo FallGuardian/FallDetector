@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 	private ImageView pic;
 	private ImageView animate;
 	private ImageView power;
-	public static int phone;
+	
 	private int frame=0;
 	Reference get;
 	Reference contact;
@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
 	private Handler handler = new Handler();
 	
 	char brand;
+	public static int phoneSensorsType;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class MainActivity extends Activity {
 			Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
 	           startActivity(intent);
 		}
-		phone=whichphone();
+		phoneSensorsType=getPhoneSensorsType();
 		connect=new Web(this);
 		handler.postDelayed(showTime, 500);
 	}
@@ -175,7 +176,7 @@ public class MainActivity extends Activity {
 		public void onClick(View arg0) {
 		    if(!glow){
 				Intent intent = new Intent(MainActivity.this, Acconly.class);
-				intent.putExtra("phone", phone);
+				intent.putExtra("phoneSensorsType", phoneSensorsType);
 				startService(intent);
 			}
 			else{
@@ -185,8 +186,8 @@ public class MainActivity extends Activity {
 		}
 	};
 	
-
-	private int whichphone(){
+	// Test sensors that phone equip with
+	private int getPhoneSensorsType(){
 		SensorManager sm;
 		Sensor SensorGyro;
 				   
@@ -194,8 +195,10 @@ public class MainActivity extends Activity {
 		  	   
 	  	SensorGyro = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 	  	if(SensorGyro == null){
+	  	// equipment only Accelerate-sensor
 		  	return 1;
 	  	}else{
+	  		// equipment with G-sensor & Accelerate-sensor
 			return 0;
 		}
 	}

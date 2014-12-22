@@ -94,7 +94,7 @@ public class WarningActivity extends Activity {
 			}
 			if(!SettingActivity.load){
 				Intent intent = new Intent(WarningActivity.this, Acconly.class);
-				intent.putExtra("phone", MainActivity.phone);
+				intent.putExtra("phone", MainActivity.phoneSensorsType);
 				startService(intent);
 			}
 			finish();
@@ -112,7 +112,7 @@ public class WarningActivity extends Activity {
 	    	   }
 	    	   if(!SettingActivity.load){
 		           Intent intent = new Intent(WarningActivity.this, Acconly.class);
-		           intent.putExtra("phone", MainActivity.phone);
+		           intent.putExtra("phone", MainActivity.phoneSensorsType);
 		           startService(intent);
 	    	   }
 	    	   finish();

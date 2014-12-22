@@ -2,6 +2,8 @@ package multiple.by.patience;
 
 import java.util.Date;
 import java.util.List;
+
+import android.R.integer;
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -24,6 +26,7 @@ import android.os.PowerManager.WakeLock;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 public class Acconly extends Service {
@@ -75,14 +78,21 @@ public class Acconly extends Service {
 	static float[] time_back=new float[many+2];
 	static float[] gyrotime_back=new float[many+2];
 	//boolean firsttime=true;
-	int which;
+	// phoneSensersType classify the phone in 2 genre,
+	// type:0 , smart-phone only equipment Accelerator Sensor
+	// type:1 , smart-phone only equipment Accelerator Sensor and Gyro Sensor
+	int phoneSensersType;
 	public static Algorithm algorithm;
 	static Web connect;
 	public static Context app;
 	
 	private Handler handler = new Handler();
 	private Handler update = new Handler();
-	//Handler save = new Handler();
+	
+	// Test for Service
+	private MonitorThread monitorThread;
+	private Handler manitorHandler = new Handler();
+	static int uploadPeriod = 4000;
 	
 	@Override
     public void onCreate() {
@@ -90,13 +100,13 @@ public class Acconly extends Service {
         app=this;
         sensorManager = (SensorManager)getSystemService("sensor");
         
-        PowerManager manager =
-            (PowerManager) getSystemService(Context.POWER_SERVICE);
+        PowerManager manager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = manager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 
         registerReceiver(mReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         
         UpdateLocation();
+        Log.i("Test Service", "in onCreate");
         
     }
 	
@@ -104,29 +114,132 @@ public class Acconly extends Service {
 	public int onStartCommand (Intent intent, int flags, int startId) {
 		//warn=0;
 		MainActivity.glow=true;
-    	which=(Integer) intent.getExtras().get("phone");
-    	algorithm=new Algorithm(this,which);
+    	phoneSensersType=(Integer) intent.getExtras().get("phoneSensorsType");
+    	algorithm=new Algorithm(this,phoneSensersType);
     	connect=new Web(this);
     	
     	checktime=500;
     	frequency=0;//0 fastest 1 20ms
-        init(which);
+    	
+        init(phoneSensersType);
     	
         startForeground(491, new Notification());
         mWakeLock.acquire();
-        handler.postDelayed(showTime, 3000);
+        // @ Guess is start handler to keep monitor motion data
+//         handler.postDelayed(showTime, 3000);
+        
+        // Test for startMonitor
+        startMonitor();
+        // @ Guessing activates askVersion 
         update.postDelayed(getnew, 7200000);
+        
             return START_STICKY;
     }
 	
+	// Test for start Monitor
+	private void startMonitor(){
+		monitorThread = new MonitorThread();
+		// Check Status of Sensor
+		if(checkSensorAvailable(phoneSensersType) && SettingActivity.load){
+			sensorBindListener(phoneSensersType);
+			monitorThread.run();
+		}
+		else{
+			Log.i("Sensor is not avaible"," in StartMonitor()");
+		}
+			
+	}
+	// Test for algorithm validate and data transmit
+	public class MonitorThread implements Runnable{
+		
+		public MonitorThread () {
+			super();
+		}
+		
+		@Override
+		public void run() {
+			manitorHandler.postDelayed(monitorThread, 1000);
+			Log.i(new Date().toString(),"in the MonitorThread");
+			cleanSensorBuffer();
+			
+			if(algorithm.calculate()/*||hand*/){
+    			genuine();	
+    		}
+			connect.update(i, k, accx, accy, accz, gyrox, gyroy, gyroz);
+		}
+	}
+	public Boolean checkSensorAvailable(int phoneSensorsType){
+		Boolean available = false;
+		switch(phoneSensorsType){
+			case 0:
+		        if(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0 
+		        			&& sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0)
+		        	available =  true;
+		        else
+		        	available = false;
+		        break;
+			case 1:
+			default:
+				if(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0)
+					available =  true;
+				else
+					available = false;
+		}
+		return available;
+	}
+	public void sensorBindListener(int phoneSensorsType){
+		
+		switch(phoneSensorsType){
+			case 0:
+				accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+				GYROSensor = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).get(0);
+				sensorManager.registerListener(accListener, accelerometerSensor, frequency);
+	    	    sensorManager.registerListener(GYROListener, GYROSensor, frequency);
+		        break;
+			case 1:
+			default:
+				accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+				sensorManager.registerListener(accListener, accelerometerSensor, frequency);
+				break;
+			
+		}
 	
-	private void init(int that){
+	}
+	private SensorEventListener accListener = new SensorEventListener() {
+		
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	private SensorEventListener gryoListener = new SensorEventListener() {
+		
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	private void init(int phoneSensorsType){
 		
 		//hand=false;
 		List<Sensor> sensorList;
 		List<Sensor> GYROList;
 		
-		switch(that){
+		switch(phoneSensorsType){
 		case 0:
 			sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 			GYROList = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
@@ -156,8 +269,13 @@ public class Acconly extends Service {
 	    	    accelerometerPresent = false;
 	        }
 			
-		break;
+	        break;
 		}
+		cleanSensorBuffer();
+		return;
+	}
+	private void cleanSensorBuffer(){
+		
 		for(int y=0;y<many;y++){
         	accx[y]=0;
         	accy[y]=0;
@@ -181,19 +299,18 @@ public class Acconly extends Service {
         ptraccold=0;
         i=0;
         k=0;
-		return;
 	}
-	
-	private void disarm(int that){
-		switch(that){
+	// To Unregister sensorManager to save battery energy
+	private void disarm(int phoneSensorsType){
+		switch(phoneSensorsType){
 		case 0:
 			sensorManager.unregisterListener(accelerometerListener);
 			sensorManager.unregisterListener(GYROListener);
 			break;
 		case 1:
-			default:
+		default:
 			sensorManager.unregisterListener(accelerometerListener);
-		break;
+			break;
 		}
 		locationManager.removeUpdates(locationListener);
     	return;
@@ -203,8 +320,8 @@ public class Acconly extends Service {
 		MainActivity.glow=false;
 		unregisterReceiver(mReceiver);
 		handler.removeCallbacks(showTime);
-        handler.removeCallbacks(stoprecording);
-        disarm(which);
+		manitorHandler.removeCallbacks(monitorThread);
+        disarm(phoneSensersType);
         mWakeLock.release();
     	stopForeground(true);
         super.onDestroy();
@@ -278,7 +395,7 @@ public class Acconly extends Service {
 	   		
 	   		 if(i<40000)i++;
 	   		 else i=0;
-	   		 if(which==1){
+	   		 if(phoneSensersType==1){
 	   			algorithm.SVMfunc(i);
 	   		 }
 	   	 }};
@@ -305,7 +422,6 @@ public class Acconly extends Service {
 	   	 
 	public void genuine(){
 		copy();
-		//handler.postDelayed(stoprecording, 2);//transmit
 		
 		handler.removeCallbacks(showTime);
 	    Intent dialogIntent = new Intent(getBaseContext(), WarningActivity.class);
@@ -313,7 +429,7 @@ public class Acconly extends Service {
       	getApplication().startActivity(dialogIntent);
       	accelerometerPresent=false;
       	
-      	disarm(which);
+      	disarm(phoneSensersType);
     	TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
 		  String countryCode = tm.getSimCountryIso();
 		  SharedPreferences settings = getSharedPreferences("Preference", 0);
@@ -338,11 +454,10 @@ public class Acconly extends Service {
 	 	Intent intent = new Intent(Acconly.this, Acconly.class);
     stopService(intent);
 	}
-	
+
 	private Runnable showTime = new Runnable() {//keep on checking
 	    public void run() {
 
-	    	Log.i(String.valueOf(accelerometerPresent),"accelerometerPresent");
 	    	// Checking accelerometer status
 	    	if(accelerometerPresent){
 	    	    ptracc=i;
@@ -355,33 +470,30 @@ public class Acconly extends Service {
 	    		else {
 	    			//a=algorithm.bucketcustom(algorithm.limitSVM);
 	    			//if(algorithm.SVMcount>8&&a){
-	    				handler.postDelayed(showTime, checktime);
+	    				Log.i("call handler","in alg test not fall");
+//	    				handler.postDelayed(showTime, checktime);
 		    		//	}
 	    			//else{handler.postDelayed(showTime, checktime);}
 	    			
-	    			}
+	    		}
 	    		// checking "enable upload" checkbox in SettingActivity
 	    		if(SettingActivity.load){
 	    			connect.update(ptraccold, ptracc, accx, accy, accz, gyrox, gyroy, gyroz);
+	    			Log.i("call Web update","while connect");
 	    		}
 	    	    ptraccold=ptracc;
 				ptrgyroold=ptrgyro;
 	    	}
 	    	else{
 	            Log.i("time:", new Date().toString());
-	            init(which);
+	            init(phoneSensersType);
 	    	}
-	    	//Log.i("i&k", String.valueOf(SVM[k%400])+" "+String.valueOf(k));
+	    	Log.i("showtime execute at:", new Date().toString());
 	    }
 	    
 	    };
 	    
-	private Runnable stoprecording = new Runnable() {
-	        public void run() {
-	        	
-	        }
-	        
-	    };
+	    
 	private Runnable getnew = new Runnable() {
 	        public void run() {
 	        	connect.askversion();
@@ -424,8 +536,8 @@ public class Acconly extends Service {
 	     
 	            Runnable runnable = new Runnable() {
 	                public void run() {
-	                    disarm(which);
-	                    init(which);
+	                    disarm(phoneSensersType);
+	                    init(phoneSensersType);
 	                }
 	            };
 	     
