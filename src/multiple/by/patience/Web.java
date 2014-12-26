@@ -41,7 +41,7 @@ public class Web {
 				int j;
 				try{
 					HttpClient httpclient = new DefaultHttpClient();
-					HttpPost method = new HttpPost("http://140.114.71.113/cellphone/test.php");
+					HttpPost method = new HttpPost("http://140.114.71.113/fallDetect/recevie/test.php");
 	          
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 					for(j=0;j<400;j++){//three axis upload
@@ -149,7 +149,7 @@ public class Web {
 			public void run() {
 				try{
 					HttpClient httpclient = new DefaultHttpClient();
-					HttpPost method = new HttpPost("http://140.114.71.113/cellphone/test.php");
+					HttpPost method = new HttpPost("http://140.114.71.113/fallDetect/receive/test.php");
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 					int count=0;
 					if(before>after){

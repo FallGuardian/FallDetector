@@ -114,7 +114,9 @@ public class Acconly extends Service {
 	public int onStartCommand (Intent intent, int flags, int startId) {
 		//warn=0;
 		MainActivity.glow=true;
+		// Get the info of phone type, Both gryo and acc sensor , acc sensor
     	phoneSensersType=(Integer) intent.getExtras().get("phoneSensorsType");
+    	
     	algorithm=new Algorithm(this,phoneSensersType);
     	connect=new Web(this);
     	
@@ -194,7 +196,7 @@ public class Acconly extends Service {
 				accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
 				GYROSensor = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).get(0);
 				sensorManager.registerListener(accListener, accelerometerSensor, frequency);
-	    	    sensorManager.registerListener(GYROListener, GYROSensor, frequency);
+	    	    sensorManager.registerListener(gryoListener, GYROSensor, frequency);
 		        break;
 			case 1:
 			default:
