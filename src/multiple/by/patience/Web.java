@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,8 +19,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import android.R.integer;
 import android.content.Context;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Web {
@@ -39,10 +42,20 @@ public class Web {
 		new Thread(new Runnable() {//transmitting
 			public void run() {
 				int j;
+				
 				try{
+					
 					HttpClient httpclient = new DefaultHttpClient();
-					HttpPost method = new HttpPost("http://140.114.71.113/fallDetect/recevie/test.php");
-	          
+					HttpPost method = new HttpPost("http://140.114.71.113/fallDetect/receive/test.php");
+					Log.i("In Call motionrecord()", "------------------------");
+					Log.i("motionrecord", Arrays.toString(accx));
+					Log.i("motionrecord", Arrays.toString(accy));
+					Log.i("motionrecord", Arrays.toString(accz));
+					
+					Log.i("In Call motionrecord() Static", "------------------------");
+					Log.i("AccX", Arrays.toString(Acconly.accx_back));
+					Log.i("AccY", Arrays.toString(Acconly.accy_back));
+					Log.i("AccZ", Arrays.toString(Acconly.accz_back));
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 					for(j=0;j<400;j++){//three axis upload
 						nameValuePairs.add(new BasicNameValuePair("x[]", String.valueOf(accx[j])));
@@ -102,12 +115,15 @@ public class Web {
 						Log.i("God Damn Error: " , "No string.");
 					}
 					Log.i("Send End", "motionrecord");
+					
 				}catch(Exception tt){
 					Log.i("Exceptions", "Internet failure");
 					tt.printStackTrace();
 				}
-			}//run
-		}).start();//thread
+				// This is lock 
+				Acconly.back_arrayAvilable = true;
+			}
+		}).start();
 		return;
 	}
 	
@@ -146,14 +162,17 @@ public class Web {
 			final float accy[],final float accz[],final float gyrox[],
 			final float gyroy[],final float gyroz[]){
 		new Thread(new Runnable() {//transmitting
+			
+			private HttpClient httpclient = new DefaultHttpClient();
 			public void run() {
 				try{
-					HttpClient httpclient = new DefaultHttpClient();
+					Log.i("Web update function","after:"+Integer.valueOf(after)+"before:"+Integer.toString(before));
 					HttpPost method = new HttpPost("http://140.114.71.113/fallDetect/receive/test.php");
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 					int count=0;
+					
 					if(before>after){
-						for(int j=after;j<401;j++){
+						for(int j=after;j<400;j++){
 							count++;
 							nameValuePairs.add(new BasicNameValuePair("accx[]", String.valueOf(accx[j])));
 							nameValuePairs.add(new BasicNameValuePair("accy[]", String.valueOf(accy[j])));
@@ -197,7 +216,7 @@ public class Web {
 						Log.i("God Damn Error: " , "in update");
 					}
 				}catch(Exception tt){
-					Log.i("Exceptions", "internet error");
+					Log.i("Exceptions", tt.toString());
 					
 					tt.printStackTrace();
 				}

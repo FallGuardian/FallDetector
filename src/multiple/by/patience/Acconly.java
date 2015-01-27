@@ -1,5 +1,7 @@
 package multiple.by.patience;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +34,7 @@ import android.widget.Toast;
 public class Acconly extends Service {
 	
 	SensorManager sensorManager;
-	boolean accelerometerPresent;
+	boolean accelerometerPresent = false;
 	Sensor accelerometerSensor;
 	Sensor GYROSensor;
 	private LocationManager locationManager;
@@ -45,8 +47,7 @@ public class Acconly extends Service {
 	
 	public static int many=400;
 	public static int whatevercounter=0;
-	public static int i;
-	public static int k;
+
 	public static int ptraccold;
 	//public static boolean hand=false;
 	//public static int warn=0;
@@ -54,29 +55,30 @@ public class Acconly extends Service {
 	int checktime;
 	int frequency;
 	public static int ptracc;
-	public static float[] accx=new float[many+2];
-	public static float[] accy=new float[many+2];
-	public static float[] accz=new float[many+2];
-	public static float[] time=new float[many+2];
+	public static float[] accx=new float[many];
+	public static float[] accy=new float[many];
+	public static float[] accz=new float[many];
+	public static float[] time=new float[many];
 	public static int ptrgyroold;
 	public static int ptrgyro;
-	public static float[] gyrox=new float[many+2];
-	public static float[] gyroy=new float[many+2];
-	public static float[] gyroz=new float[many+2];
-	public static float[] gyrotime=new float[many+2];
-	static float SVM[]=new float[402];
-	float TA[]=new float[402];//many+2
-    static float Av[]=new float[402];//many+2
+	public static float[] gyrox=new float[many];
+	public static float[] gyroy=new float[many];
+	public static float[] gyroz=new float[many];
+	public static float[] gyrotime=new float[many];
+	static float SVM[]=new float[many];
+	float TA[]=new float[many];//many+2
+    static float Av[]=new float[many];//many+2
     int SVMcount;
 
-	static float[] gyrox_back=new float[402];
-	static float[] gyroy_back=new float[402];
-	static float[] gyroz_back=new float[402];
-	static float[] accx_back=new float[402];
-	static float[] accy_back=new float[402];
-	static float[] accz_back=new float[402];
-	static float[] time_back=new float[many+2];
-	static float[] gyrotime_back=new float[many+2];
+	static float[] gyrox_back=new float[many];
+	static float[] gyroy_back=new float[many];
+	static float[] gyroz_back=new float[many];
+	static float[] accx_back=new float[many];
+	static float[] accy_back=new float[many];
+	static float[] accz_back=new float[many];
+	static float[] time_back=new float[many];
+	static float[] gyrotime_back=new float[many];
+	public static boolean back_arrayAvilable = true;
 	//boolean firsttime=true;
 	// phoneSensersType classify the phone in 2 genre,
 	// type:0 , smart-phone only equipment Accelerator Sensor
@@ -90,9 +92,10 @@ public class Acconly extends Service {
 	private Handler update = new Handler();
 	
 	// Test for Service
-	private MonitorThread monitorThread;
 	private Handler manitorHandler = new Handler();
-	static int uploadPeriod = 4000;
+	static int uploadPeriod = 6000;
+	
+	
 	
 	@Override
     public void onCreate() {
@@ -106,70 +109,45 @@ public class Acconly extends Service {
         registerReceiver(mReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         
         UpdateLocation();
-        Log.i("Test Service", "in onCreate");
+        Log.i("AccOnly", "in onCreate");
         
     }
 	
 
 	public int onStartCommand (Intent intent, int flags, int startId) {
+		
+		Log.i("onStartCommand"," yoyoyoyoyoyoyo");
 		//warn=0;
-		MainActivity.glow=true;
+		
 		// Get the info of phone type, Both gryo and acc sensor , acc sensor
+	
     	phoneSensersType=(Integer) intent.getExtras().get("phoneSensorsType");
     	
     	algorithm=new Algorithm(this,phoneSensersType);
     	connect=new Web(this);
     	
-    	checktime=500;
+    	checktime=6000;
     	frequency=0;//0 fastest 1 20ms
     	
-        init(phoneSensersType);
+    	if(back_arrayAvilable){
+    		MainActivity.glow=true;
+        	init(phoneSensersType);
+    	}
     	
         startForeground(491, new Notification());
         mWakeLock.acquire();
         // @ Guess is start handler to keep monitor motion data
-//         handler.postDelayed(showTime, 3000);
+         handler.postDelayed(showTime, checktime);
         
         // Test for startMonitor
-        startMonitor();
+//        startMonitor();
         // @ Guessing activates askVersion 
         update.postDelayed(getnew, 7200000);
         
             return START_STICKY;
     }
-	
-	// Test for start Monitor
-	private void startMonitor(){
-		monitorThread = new MonitorThread();
-		// Check Status of Sensor
-		if(checkSensorAvailable(phoneSensersType) && SettingActivity.load){
-			sensorBindListener(phoneSensersType);
-			monitorThread.run();
-		}
-		else{
-			Log.i("Sensor is not avaible"," in StartMonitor()");
-		}
-			
-	}
-	// Test for algorithm validate and data transmit
-	public class MonitorThread implements Runnable{
-		
-		public MonitorThread () {
-			super();
-		}
-		
-		@Override
-		public void run() {
-			manitorHandler.postDelayed(monitorThread, 1000);
-			Log.i(new Date().toString(),"in the MonitorThread");
-			cleanSensorBuffer();
-			
-			if(algorithm.calculate()/*||hand*/){
-    			genuine();	
-    		}
-			connect.update(i, k, accx, accy, accz, gyrox, gyroy, gyroz);
-		}
-	}
+
+
 	public Boolean checkSensorAvailable(int phoneSensorsType){
 		Boolean available = false;
 		switch(phoneSensorsType){
@@ -237,6 +215,7 @@ public class Acconly extends Service {
 	};
 	private void init(int phoneSensorsType){
 		
+		cleanSensorBuffer();
 		//hand=false;
 		List<Sensor> sensorList;
 		List<Sensor> GYROList;
@@ -273,7 +252,7 @@ public class Acconly extends Service {
 			
 	        break;
 		}
-		cleanSensorBuffer();
+		
 		return;
 	}
 	private void cleanSensorBuffer(){
@@ -322,7 +301,6 @@ public class Acconly extends Service {
 		MainActivity.glow=false;
 		unregisterReceiver(mReceiver);
 		handler.removeCallbacks(showTime);
-		manitorHandler.removeCallbacks(monitorThread);
         disarm(phoneSensersType);
         mWakeLock.release();
     	stopForeground(true);
@@ -381,7 +359,8 @@ public class Acconly extends Service {
 		// TODO Auto-generated method stub
 
 		}
-	
+	public static int i;
+	public static int k;
 	private SensorEventListener accelerometerListener = new SensorEventListener(){
 	   	 @Override
 	   	 public void onAccuracyChanged(Sensor arg0, int arg1) {
@@ -423,12 +402,15 @@ public class Acconly extends Service {
 	      	 }};
 	   	 
 	public void genuine(){
+		
+		// This moment will decide the whole observation data scope
 		copy();
 		
 		handler.removeCallbacks(showTime);
 	    Intent dialogIntent = new Intent(getBaseContext(), WarningActivity.class);
       	dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//how to get activity back
       	getApplication().startActivity(dialogIntent);
+      	Log.i("genuine", "started Warning");
       	accelerometerPresent=false;
       	
       	disarm(phoneSensersType);
@@ -454,14 +436,14 @@ public class Acconly extends Service {
   	   	   }
   		  
 	 	Intent intent = new Intent(Acconly.this, Acconly.class);
-    stopService(intent);
+	 	stopService(intent);
 	}
 
 	private Runnable showTime = new Runnable() {//keep on checking
 	    public void run() {
-
+	    	
 	    	// Checking accelerometer status
-	    	if(accelerometerPresent){
+	    	if(accelerometerPresent && back_arrayAvilable){
 	    	    ptracc=i;
 	    		ptrgyro=k;
 	    		
@@ -470,60 +452,75 @@ public class Acconly extends Service {
 	    			
 	    		}
 	    		else {
-	    			//a=algorithm.bucketcustom(algorithm.limitSVM);
-	    			//if(algorithm.SVMcount>8&&a){
-	    				Log.i("call handler","in alg test not fall");
+//	    			a=algorithm.bucketcustom(algorithm.limitSVM);
+//	    			if(algorithm.SVMcount>8&&a){
+	    			Log.i("shotTime","in alg test not fall");
+	    				handler.postDelayed(showTime, checktime);
+	    				
+//		    		}
+//	    			else{
 //	    				handler.postDelayed(showTime, checktime);
-		    		//	}
-	    			//else{handler.postDelayed(showTime, checktime);}
+//	    			}
 	    			
 	    		}
 	    		// checking "enable upload" checkbox in SettingActivity
-	    		if(SettingActivity.load){
+	    		if(SettingActivity.dynamicEnable){
 	    			connect.update(ptraccold, ptracc, accx, accy, accz, gyrox, gyroy, gyroz);
-	    			Log.i("call Web update","while connect");
+	    			Log.i("showTime","call Web update");
 	    		}
 	    	    ptraccold=ptracc;
 				ptrgyroold=ptrgyro;
 	    	}
 	    	else{
-	            Log.i("time:", new Date().toString());
+	            
 	            init(phoneSensersType);
 	    	}
-	    	Log.i("showtime execute at:", new Date().toString());
-	    }
-	    
-	    };
-	    
-	    
-	private Runnable getnew = new Runnable() {
-	        public void run() {
-	        	connect.askversion();
-	        	algorithm.update(app);
-	        	update.postDelayed(getnew, 7200000);
-	        }
-	    };
-	    private void copy(){
-	    	System.arraycopy(accx, 0, accx_back, 0, accx.length);
-			System.arraycopy(accy, 0, accy_back, 0, accy.length);
-			System.arraycopy(accz, 0, accz_back, 0, accz.length);
-			System.arraycopy(gyrox, 0, gyrox_back, 0, gyrox.length);
-			System.arraycopy(gyroy, 0, gyroy_back, 0, gyroy.length);
-			System.arraycopy(gyroz, 0, gyroz_back, 0, gyroz.length);
-			System.arraycopy(gyrotime, 0, gyrotime_back, 0, gyrotime.length);
-			System.arraycopy(time, 0, time_back, 0, time.length);
-			
-	    	return;
 	    	
 	    }
 	    
+	    };
+	    
+	    
+		private Runnable getnew = new Runnable() {
+		        public void run() {
+		        	connect.askversion();
+		        	algorithm.update(app);
+		        	update.postDelayed(getnew, 7200000);
+		        }
+		 };
+		 private void copy(){
+		    	System.arraycopy(accx, 0, accx_back, 0, accx.length);
+				System.arraycopy(accy, 0, accy_back, 0, accy.length);
+				System.arraycopy(accz, 0, accz_back, 0, accz.length);
+				System.arraycopy(gyrox, 0, gyrox_back, 0, gyrox.length);
+				System.arraycopy(gyroy, 0, gyroy_back, 0, gyroy.length);
+				System.arraycopy(gyroz, 0, gyroz_back, 0, gyroz.length);
+				System.arraycopy(gyrotime, 0, gyrotime_back, 0, gyrotime.length);
+				System.arraycopy(time, 0, time_back, 0, time.length);
+				Log.i("In Genunie copy()", "------------------------");
+				Log.i("In Genunie copy()", Arrays.toString(accx_back));
+				Log.i("In Genunie copy()", Arrays.toString(accy_back));
+				Log.i("In Genunie copy()", Arrays.toString(accz_back));
+		    	return;
+		 }
+	    
 	    
 	    public static void send(int g){
+	    	
+	    	back_arrayAvilable = false;
+//	    	Log.i("In Call send()", "------------------------");
+//	    	Log.i("before send", Arrays.toString(accx_back));
+//			Log.i("before send", Arrays.toString(accy_back));
+//			Log.i("before send", Arrays.toString(accz_back));
 	    	connect.motionrecord(accx_back, accy_back, accz_back, gyrox_back, gyroy_back, gyroz_back, gyrotime_back, time_back,g);
+//	    	Log.i("affer send", Arrays.toString(accx_back));
+//			Log.i("affer send", Arrays.toString(accy_back));
+//			Log.i("affer send", Arrays.toString(accz_back));
+	    	
 	    	return;
 	    }
 	    public static void sendnow(int g){
-	    	connect.motionrecord(accx, accy, accz, gyrox, gyroy, gyroz, gyrotime, time,g);
+	    	connect.motionrecord(accx, accy, accz, gyrox, gyroy, gyroz, gyrotime, time, g);
 	    	return;
 	    }
 

@@ -1,6 +1,8 @@
 package multiple.by.patience;
 
 
+import java.util.Arrays;
+
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -44,8 +47,8 @@ public class WarningActivity extends Activity {
 		fell3 = (Button) findViewById(R.id.button1);
 		stand1 = (Button) findViewById(R.id.button2);
 		info=(TextView) findViewById(R.id.textView1);
-		fell3.setOnClickListener(bad3);
-		stand1.setOnClickListener(good3);
+		fell3.setOnClickListener(FellEvent3);
+		stand1.setOnClickListener(standEvent);
 		slide.setOnSeekBarChangeListener(comeon);
 		connect=new Web(this);
 		
@@ -86,36 +89,42 @@ public class WarningActivity extends Activity {
 	}
 	
 	
-	private Button.OnClickListener good3 = new Button.OnClickListener() {
+	private Button.OnClickListener standEvent = new Button.OnClickListener() {
 		public void onClick(View arg0) {
 			notificationManager.cancelAll();
 			if(SettingActivity.upload){
 				Acconly.send(0);
 			}
-			if(!SettingActivity.load){
+			if(!SettingActivity.dynamicEnable){
 				Intent intent = new Intent(WarningActivity.this, Acconly.class);
-				intent.putExtra("phone", MainActivity.phoneSensorsType);
+				intent.putExtra("phoneSensorsType", MainActivity.phoneSensorsType);
 				startService(intent);
 			}
 			finish();
 		}
 	};
 	  
-	  private Button.OnClickListener bad3 = new Button.OnClickListener() {
+	  private Button.OnClickListener FellEvent3 = new Button.OnClickListener() {
 	       public void onClick(View arg0) {
 	    	   
 	    	   notificationManager.cancelAll();
 	    	   if(SettingActivity.upload){
+	    		   
 	    		   //if(Acconly.hand)Acconly.send(2);
 	    		   //else 
+//	    		   Log.i("In Warning FellEvent3()", "------------------------");
+//					Log.i("In Warning FellEvent3()", Arrays.toString(Acconly.accx_back));
+//					Log.i("In Warning FellEvent3()", Arrays.toString(Acconly.accy_back));
+//					Log.i("In Warning FellEvent3()", Arrays.toString(Acconly.accz_back));
 	    			   Acconly.send(1);
 	    	   }
-	    	   if(!SettingActivity.load){
+	    	   if(!SettingActivity.dynamicEnable){
 		           Intent intent = new Intent(WarningActivity.this, Acconly.class);
-		           intent.putExtra("phone", MainActivity.phoneSensorsType);
+		           intent.putExtra("phoneSensorsType", MainActivity.phoneSensorsType);
 		           startService(intent);
 	    	   }
 	    	   finish();
+	    	   
 	      }
 	  };
 	  

@@ -20,8 +20,8 @@ public class SettingActivity extends Activity {
 	Reference get;
 	Web pipa;
 	public static boolean message=false;//SMS
-	public static boolean upload=false;//data upload
-	public static boolean load=true;//dynamic movement upload, default is enable
+	public static boolean upload=true;//data upload
+	public static boolean dynamicEnable=false;//dynamic movement upload, default is enable
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,7 +64,7 @@ public class SettingActivity extends Activity {
 		else{
 			network.setChecked(false);
 		}
-		if(load){
+		if(dynamicEnable){
 			dynamic.setChecked(true);
 		}
 		else{
@@ -145,9 +145,9 @@ public class SettingActivity extends Activity {
 	private CheckBox.OnCheckedChangeListener disable4=new CheckBox.OnCheckedChangeListener(){
 		public void onCheckedChanged(CompoundButton buttonView,boolean isChecked){
 			if(dynamic.isChecked()==true){
-			load=true;
+			dynamicEnable=true;
 			}else{
-				load=false;
+				dynamicEnable=false;
 			}  
 		}
 	};
