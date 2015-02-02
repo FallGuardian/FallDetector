@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -157,9 +158,11 @@ public class MainActivity extends Activity {
 	
 	private Button.OnClickListener update = new Button.OnClickListener() {
 		  public void onClick(View arg0) {
+			  Log.i("in update clcik","yayaya");
 			  connect.askversion();
 			  String q = android.os.Build.BRAND;
 			  brand = q.charAt(0);
+			  
 			  /*if(glow){
 			  Acconly.asd.update(Acconly.app);
 			  }*/

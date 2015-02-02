@@ -1,6 +1,7 @@
 package multiple.by.patience;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -93,7 +94,7 @@ public class Acconly extends Service {
 	
 	// Test for Service
 	private Handler manitorHandler = new Handler();
-	static int uploadPeriod = 6000;
+	static int uploadPeriod = 4000;
 	
 	
 	
@@ -126,7 +127,7 @@ public class Acconly extends Service {
     	algorithm=new Algorithm(this,phoneSensersType);
     	connect=new Web(this);
     	
-    	checktime=6000;
+    	checktime=3000;
     	frequency=0;//0 fastest 1 20ms
     	
     	if(back_arrayAvilable){
@@ -404,6 +405,9 @@ public class Acconly extends Service {
 	public void genuine(){
 		
 		// This moment will decide the whole observation data scope
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Log.i("genuine()",sdf.format(date));
 		copy();
 		
 		handler.removeCallbacks(showTime);
@@ -446,6 +450,10 @@ public class Acconly extends Service {
 	    	if(accelerometerPresent && back_arrayAvilable){
 	    	    ptracc=i;
 	    		ptrgyro=k;
+	    		
+	    		Date date = new Date();
+	    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    		Log.i("genuine()",sdf.format(date));
 	    		
 	    		if(algorithm.calculate()/*||hand*/){
 	    			genuine();
@@ -497,10 +505,10 @@ public class Acconly extends Service {
 				System.arraycopy(gyroz, 0, gyroz_back, 0, gyroz.length);
 				System.arraycopy(gyrotime, 0, gyrotime_back, 0, gyrotime.length);
 				System.arraycopy(time, 0, time_back, 0, time.length);
-				Log.i("In Genunie copy()", "------------------------");
-				Log.i("In Genunie copy()", Arrays.toString(accx_back));
-				Log.i("In Genunie copy()", Arrays.toString(accy_back));
-				Log.i("In Genunie copy()", Arrays.toString(accz_back));
+//				Log.i("In Genunie copy()", "------------------------");
+//				Log.i("In Genunie copy()", Arrays.toString(accx_back));
+//				Log.i("In Genunie copy()", Arrays.toString(accy_back));
+//				Log.i("In Genunie copy()", Arrays.toString(accz_back));
 		    	return;
 		 }
 	    

@@ -52,10 +52,10 @@ public class Web {
 					Log.i("motionrecord", Arrays.toString(accy));
 					Log.i("motionrecord", Arrays.toString(accz));
 					
-					Log.i("In Call motionrecord() Static", "------------------------");
-					Log.i("AccX", Arrays.toString(Acconly.accx_back));
-					Log.i("AccY", Arrays.toString(Acconly.accy_back));
-					Log.i("AccZ", Arrays.toString(Acconly.accz_back));
+//					Log.i("In Call motionrecord() Static", "------------------------");
+//					Log.i("AccX", Arrays.toString(Acconly.accx_back));
+//					Log.i("AccY", Arrays.toString(Acconly.accy_back));
+//					Log.i("AccZ", Arrays.toString(Acconly.accz_back));
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 					for(j=0;j<400;j++){//three axis upload
 						nameValuePairs.add(new BasicNameValuePair("x[]", String.valueOf(accx[j])));
@@ -266,6 +266,7 @@ public class Web {
 						get.save_int("SVMact", Integer.parseInt(inputline));
 						inputline=in.readLine();
 						get.save_int("AVact", Integer.parseInt(inputline));
+						Log.i("askversion", "check activate");
 					}
        
 				}catch(Exception tt){
