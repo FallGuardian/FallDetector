@@ -84,47 +84,47 @@ public class MainActivity extends Activity {
 			whatsnew.setText(h+brand);
 			if(glow&&Acconly.accx[0]!=0){
         	
-			switch(frame){
-        	case 1:
-            	animate.setImageResource(R.drawable.a);
-            	break;
-        	case 2:
-            	animate.setImageResource(R.drawable.b);
-            	break;
-        	case 3:
-            	animate.setImageResource(R.drawable.c);
-            	break;
-        	case 4:
-            	animate.setImageResource(R.drawable.d);
-            	break;
-        	case 5:
-            	animate.setImageResource(R.drawable.e);
-            	break;
-        	case 6:
-            	animate.setImageResource(R.drawable.f);
-            	break;
-        	case 7:
-            	animate.setImageResource(R.drawable.g);
-            	break;
-        	case 8:
-            	animate.setImageResource(R.drawable.h);
-            	break;
-        	case 9:
-            	animate.setImageResource(R.drawable.i);
-            	frame=0;
-            	break;
-            default:
-            	animate.setImageResource(R.drawable.a);
-                frame=1;
-                break;
-        	}
-        	frame++;
+				switch(frame){
+		        	case 1:
+		            	animate.setImageResource(R.drawable.a);
+		            	break;
+		        	case 2:
+		            	animate.setImageResource(R.drawable.b);
+		            	break;
+		        	case 3:
+		            	animate.setImageResource(R.drawable.c);
+		            	break;
+		        	case 4:
+		            	animate.setImageResource(R.drawable.d);
+		            	break;
+		        	case 5:
+		            	animate.setImageResource(R.drawable.e);
+		            	break;
+		        	case 6:
+		            	animate.setImageResource(R.drawable.f);
+		            	break;
+		        	case 7:
+		            	animate.setImageResource(R.drawable.g);
+		            	break;
+		        	case 8:
+		            	animate.setImageResource(R.drawable.h);
+		            	break;
+		        	case 9:
+		            	animate.setImageResource(R.drawable.i);
+		            	frame=0;
+		            	break;
+		            default:
+		            	animate.setImageResource(R.drawable.a);
+		                frame=1;
+		                break;
+	        	}
+				frame++;
         		power.setImageResource(R.drawable.on);
         	}
         	else{
-        	power.setImageResource(R.drawable.off);
+        		power.setImageResource(R.drawable.off);
         	}
-        	handler.postDelayed(showTime, 200);
+        	handler.postDelayed(showTime, 500);
         }
     };
 

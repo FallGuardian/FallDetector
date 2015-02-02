@@ -235,7 +235,7 @@ public class Web {
 	 	    	   
 				try{
 					HttpClient httpclient = new DefaultHttpClient();
-					HttpGet method = new HttpGet("http://logos.cs.nthu.edu.tw/~shihchan/cellphone/update.php?i=2"/*+get.get_string("version")*/);
+					HttpGet method = new HttpGet("http://140.114.71.113/fallDetect/receive/update_v2.php?i=default"/*+get.get_string("version")*/);
        
 					HttpResponse response = httpclient.execute(method);
 					HttpEntity entity = response.getEntity();
@@ -247,7 +247,7 @@ public class Web {
 						in = new BufferedReader(new InputStreamReader(is));
      	
 						inputline=in.readLine();
-						get.save_float("version", Float.parseFloat(inputline));
+//						get.save_float("version", Float.parseFloat(inputline));
 						
 						
 						inputline=in.readLine();
