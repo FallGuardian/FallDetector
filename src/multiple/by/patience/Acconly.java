@@ -127,7 +127,7 @@ public class Acconly extends Service {
     	algorithm=new Algorithm(this,phoneSensersType);
     	connect=new Web(this);
     	
-    	checktime=3000;
+    	checktime=500;
     	frequency=0;//0 fastest 1 20ms
     	
     	if(back_arrayAvilable){
@@ -138,7 +138,7 @@ public class Acconly extends Service {
         startForeground(491, new Notification());
         mWakeLock.acquire();
         // @ Guess is start handler to keep monitor motion data
-         handler.postDelayed(showTime, checktime);
+         handler.postDelayed(showTime, 3000);
         
         // Test for startMonitor
 //        startMonitor();
@@ -373,7 +373,7 @@ public class Acconly extends Service {
 	   		accx[i%many]=event.values[0];
 	   		accy[i%many]=event.values[1];
 	   		accz[i%many]=event.values[2];
-	   		time[i%many]= (System.currentTimeMillis()%100000);
+	   		time[i%many]= (System.currentTimeMillis()/1000L);
 	   		
 	   		 if(i<40000)i++;
 	   		 else i=0;
@@ -393,7 +393,7 @@ public class Acconly extends Service {
 	      		gyrox[k%many]=event.values[0];
 	      		gyroy[k%many]=event.values[1];
 	      		gyroz[k%many]=event.values[2];
-	      		gyrotime[k%many]= (System.currentTimeMillis()%10000)/1000;
+	      		gyrotime[k%many]= (System.currentTimeMillis()/1000L);
 	      		
 	      		algorithm.SVMfunc(k);
 	      		algorithm.AVfunc(k);

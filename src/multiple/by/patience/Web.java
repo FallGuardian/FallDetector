@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class Web {
 	Reference get,person;
 	String bug="ddd";
+	String ServerUrl ="http://140.114.71.114/fallDetect/receive/test.php";
 	Web(Context context){
 		get=new Reference(context,"algorversion");
 		person=new Reference(context,"personalinfo");
@@ -46,7 +47,7 @@ public class Web {
 				try{
 					
 					HttpClient httpclient = new DefaultHttpClient();
-					HttpPost method = new HttpPost("http://140.114.71.113/fallDetect/receive/test.php");
+					HttpPost method = new HttpPost(ServerUrl);
 					Log.i("In Call motionrecord()", "------------------------");
 					Log.i("motionrecord", Arrays.toString(accx));
 					Log.i("motionrecord", Arrays.toString(accy));
@@ -167,7 +168,7 @@ public class Web {
 			public void run() {
 				try{
 					Log.i("Web update function","after:"+Integer.valueOf(after)+"before:"+Integer.toString(before));
-					HttpPost method = new HttpPost("http://140.114.71.113/fallDetect/receive/test.php");
+					HttpPost method = new HttpPost(ServerUrl);
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 					int count=0;
 					
