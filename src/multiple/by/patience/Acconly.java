@@ -53,7 +53,7 @@ public class Acconly extends Service {
 	//public static boolean hand=false;
 	//public static int warn=0;
 	
-	int checktime;
+	
 	int frequency;
 	public static int ptracc;
 	public static float[] accx=new float[many];
@@ -94,8 +94,8 @@ public class Acconly extends Service {
 	
 	// Test for Service
 	private Handler manitorHandler = new Handler();
-	static int uploadPeriod = 4000;
-	
+	int uploadPeriod;
+	int checktime;
 	
 	
 	@Override
@@ -110,14 +110,13 @@ public class Acconly extends Service {
         registerReceiver(mReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         
         UpdateLocation();
-        Log.i("AccOnly", "in onCreate");
         
     }
 	
 
 	public int onStartCommand (Intent intent, int flags, int startId) {
 		
-		Log.i("onStartCommand"," yoyoyoyoyoyoyo");
+		Log.i("onStartCommand"," start to initlize");
 		//warn=0;
 		
 		// Get the info of phone type, Both gryo and acc sensor , acc sensor
@@ -127,6 +126,7 @@ public class Acconly extends Service {
     	algorithm=new Algorithm(this,phoneSensersType);
     	connect=new Web(this);
     	
+    	uploadPeriod = 8000;
     	checktime=500;
     	frequency=0;//0 fastest 1 20ms
     	
@@ -138,7 +138,7 @@ public class Acconly extends Service {
         startForeground(491, new Notification());
         mWakeLock.acquire();
         // @ Guess is start handler to keep monitor motion data
-         handler.postDelayed(showTime, 3000);
+         handler.postDelayed(showTime, uploadPeriod);
         
         // Test for startMonitor
 //        startMonitor();
@@ -149,43 +149,7 @@ public class Acconly extends Service {
     }
 
 
-	public Boolean checkSensorAvailable(int phoneSensorsType){
-		Boolean available = false;
-		switch(phoneSensorsType){
-			case 0:
-		        if(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0 
-		        			&& sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0)
-		        	available =  true;
-		        else
-		        	available = false;
-		        break;
-			case 1:
-			default:
-				if(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0)
-					available =  true;
-				else
-					available = false;
-		}
-		return available;
-	}
-	public void sensorBindListener(int phoneSensorsType){
-		
-		switch(phoneSensorsType){
-			case 0:
-				accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
-				GYROSensor = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).get(0);
-				sensorManager.registerListener(accListener, accelerometerSensor, frequency);
-	    	    sensorManager.registerListener(gryoListener, GYROSensor, frequency);
-		        break;
-			case 1:
-			default:
-				accelerometerSensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
-				sensorManager.registerListener(accListener, accelerometerSensor, frequency);
-				break;
-			
-		}
-	
-	}
+
 	private SensorEventListener accListener = new SensorEventListener() {
 		
 		@Override
@@ -453,7 +417,7 @@ public class Acconly extends Service {
 	    		
 	    		Date date = new Date();
 	    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    		Log.i("genuine()",sdf.format(date));
+	    		Log.i("in genuine()",sdf.format(date));
 	    		
 	    		if(algorithm.calculate()/*||hand*/){
 	    			genuine();
