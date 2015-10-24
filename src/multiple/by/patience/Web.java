@@ -58,16 +58,7 @@ public class Web {
 //					Log.i("AccY", Arrays.toString(Acconly.accy_back));
 //					Log.i("AccZ", Arrays.toString(Acconly.accz_back));
 					List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-					for(j=0;j<400;j++){//three axis upload
-						nameValuePairs.add(new BasicNameValuePair("x[]", String.valueOf(accx[j])));
-						nameValuePairs.add(new BasicNameValuePair("y[]", String.valueOf(accy[j])));
-						nameValuePairs.add(new BasicNameValuePair("z[]", String.valueOf(accz[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyrox[]", String.valueOf(gyrox[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyroy[]", String.valueOf(gyroy[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyroz[]", String.valueOf(gyroz[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyrotime[]", String.valueOf(gyrotime[j])));
-						nameValuePairs.add(new BasicNameValuePair("time[]", String.valueOf(time[j])));
-					}
+					
 	    
 					String q = android.os.Build.BRAND;//manufacturer
 					char brand = q.charAt(0);
@@ -96,16 +87,29 @@ public class Web {
 					Scanner in = new Scanner(person.get_string("birth")).useDelimiter("[^0-9]+");
 					x = in.nextInt();
 					nameValuePairs.add(new BasicNameValuePair("birth", String.valueOf(x)));
+					
 					if(fallen==1){
-						nameValuePairs.add(new BasicNameValuePair("fell", "1"));}
+						nameValuePairs.add(new BasicNameValuePair("fallen", "1"));}
 					else if(fallen==0){
-						nameValuePairs.add(new BasicNameValuePair("fell", "0"));
+						nameValuePairs.add(new BasicNameValuePair("fallen", "0"));
 					}
 					else{
-						nameValuePairs.add(new BasicNameValuePair("fell", "2"));
+						nameValuePairs.add(new BasicNameValuePair("fallen", "2"));
 					}
+					for(j=0;j<400;j++){//three axis upload
+						nameValuePairs.add(new BasicNameValuePair("x[]", String.valueOf(accx[j])));
+						nameValuePairs.add(new BasicNameValuePair("y[]", String.valueOf(accy[j])));
+						nameValuePairs.add(new BasicNameValuePair("z[]", String.valueOf(accz[j])));
+						nameValuePairs.add(new BasicNameValuePair("gyrox[]", String.valueOf(gyrox[j])));
+						nameValuePairs.add(new BasicNameValuePair("gyroy[]", String.valueOf(gyroy[j])));
+						nameValuePairs.add(new BasicNameValuePair("gyroz[]", String.valueOf(gyroz[j])));
+						nameValuePairs.add(new BasicNameValuePair("gyrotime[]", String.valueOf(gyrotime[j])));
+						nameValuePairs.add(new BasicNameValuePair("time[]", String.valueOf(time[j])));
+					}
+					
+					
+					
 					method.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-	        
 					HttpResponse response = httpclient.execute(method);
 					HttpEntity entity = response.getEntity();
 	          
