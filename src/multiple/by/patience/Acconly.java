@@ -513,14 +513,14 @@ public class Acconly extends Service {
 		 }
 	    
 	    
-	    public static void send(int g){
+	    public static void send(int fallLabel){
 	    	
 	    	back_arrayAvilable = false;
 //	    	Log.i("In Call send()", "------------------------");
 //	    	Log.i("before send", Arrays.toString(accx_back));
 //			Log.i("before send", Arrays.toString(accy_back));
 //			Log.i("before send", Arrays.toString(accz_back));
-	    	connect.motionrecord(accx_back, accy_back, accz_back, gyrox_back, gyroy_back, gyroz_back, gyrotime_back, time_back,g);
+	    	connect.motionrecord(accx_back, accy_back, accz_back, gyrox_back, gyroy_back, gyroz_back, gyrotime_back, time_back,fallLabel);
 //	    	Log.i("affer send", Arrays.toString(accx_back));
 //			Log.i("affer send", Arrays.toString(accy_back));
 //			Log.i("affer send", Arrays.toString(accz_back));
