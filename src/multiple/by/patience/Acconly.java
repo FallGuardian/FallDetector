@@ -116,7 +116,7 @@ public class Acconly extends Service {
 
 	public int onStartCommand (Intent intent, int flags, int startId) {
 		
-		Log.i("onStartCommand"," start to initlize");
+		
 		//warn=0;
 		
 		// Get the info of phone type, Both gryo and acc sensor , acc sensor
@@ -130,54 +130,28 @@ public class Acconly extends Service {
     	checktime=500;
     	frequency=0;//0 fastest 1 20ms
     	
+    	// When Warning Activity is end and back to AccOnly Service
+    	// Avoid init twice
     	if(back_arrayAvilable){
     		MainActivity.glow=true;
         	init(phoneSensersType);
+        	Log.i("onStartCommand"," initialize sensor completed!");
     	}
     	
         startForeground(491, new Notification());
         mWakeLock.acquire();
         // @ Guess is start handler to keep monitor motion data
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Log.i("onStartCommand start showTime Thread",sdf.format(date));
          handler.postDelayed(showTime, uploadPeriod);
         
-        // Test for startMonitor
-//        startMonitor();
         // @ Guessing activates askVersion 
-        update.postDelayed(getnew, 7200000);
+//        update.postDelayed(getnew, 7200000);
         
             return START_STICKY;
     }
 
-
-
-	private SensorEventListener accListener = new SensorEventListener() {
-		
-		@Override
-		public void onSensorChanged(SensorEvent event) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
-			
-		}
-	};
-	private SensorEventListener gryoListener = new SensorEventListener() {
-		
-		@Override
-		public void onSensorChanged(SensorEvent event) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
-			
-		}
-	};
 	private void init(int phoneSensorsType){
 		
 		cleanSensorBuffer();
@@ -196,6 +170,7 @@ public class Acconly extends Service {
 
 	    		sensorManager.registerListener(accelerometerListener, accelerometerSensor, frequency);
 	    	    sensorManager.registerListener(GYROListener, GYROSensor, frequency);
+	    	    Log.i("init"," gryo & acc initilize");
 	    	    
 	        }
 	        else{
@@ -210,6 +185,7 @@ public class Acconly extends Service {
 	        	accelerometerPresent = true;
 	        	accelerometerSensor = sensorList.get(0);
 	    		sensorManager.registerListener(accelerometerListener, accelerometerSensor, frequency);
+	    		Log.i("init","acc initilize");
 	        }
 	        else{
 	    	    accelerometerPresent = false;
@@ -419,22 +395,22 @@ public class Acconly extends Service {
 	    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    		Log.i("in genuine()",sdf.format(date));
 	    		
-	    		if(algorithm.calculate()/*||hand*/){
+//	    		if(algorithm.calculate()/*||hand*/){
 	    			genuine();
 	    			
-	    		}
-	    		else {
+//	    		}
+//	    		else {
 //	    			a=algorithm.bucketcustom(algorithm.limitSVM);
 //	    			if(algorithm.SVMcount>8&&a){
-	    			Log.i("shotTime","in alg test not fall");
-	    				handler.postDelayed(showTime, checktime);
+//	    			Log.i("shotTime","in alg test not fall");
+//	    				handler.postDelayed(showTime, checktime);
 	    				
 //		    		}
 //	    			else{
 //	    				handler.postDelayed(showTime, checktime);
 //	    			}
 	    			
-	    		}
+//	    		}
 	    		// checking "enable upload" checkbox in SettingActivity
 	    		if(SettingActivity.dynamicEnable){
 	    			connect.update(ptraccold, ptracc, accx, accy, accz, gyrox, gyroy, gyroz);
@@ -479,6 +455,7 @@ public class Acconly extends Service {
 	    
 	    public static void send(int fallLabel){
 	    	
+	    	// Set boolean varible avoid re-initilize
 	    	back_arrayAvilable = false;
 //	    	Log.i("In Call send()", "------------------------");
 //	    	Log.i("before send", Arrays.toString(accx_back));
