@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -46,12 +47,18 @@ public class Web {
 				
 				try{
 					
-					HttpClient httpclient = new DefaultHttpClient();
-					HttpPost method = new HttpPost(ServerUrl);
-					Log.i("In Call motionrecord()", "------------------------");
-					Log.i("motionrecord", Arrays.toString(accx));
-					Log.i("motionrecord", Arrays.toString(accy));
-					Log.i("motionrecord", Arrays.toString(accz));
+					
+//					Log.i("In Call motionrecord()", "------------------------");
+//					Log.i("motionrecord AccX", Arrays.toString(accx));
+//					int c = 0;
+//					for (int i = 0;i < accx.length; i++){
+//						if (accx[i] != 0)
+//							c++; 
+//					}
+//					Log.i("AccX[] size", String.valueOf(c) );
+//					Log.i("motionrecord AccY", Arrays.toString(accy));
+//					Log.i("motionrecord AccZ", Arrays.toString(accz));
+				
 					
 //					Log.i("In Call motionrecord() Static", "------------------------");
 //					Log.i("AccX", Arrays.toString(Acconly.accx_back));
@@ -96,30 +103,70 @@ public class Web {
 					else{
 						nameValuePairs.add(new BasicNameValuePair("fallen", "2"));
 					}
+					String xStr = "";
+					String yStr = "";
+					String zStr = "";
+					String gyroxStr = "";
+					String gyroyStr = "";
+					String gyrozStr = "";
+					String timeStr = "";
+					String gyroTimeStr = "";
 					for(j=0;j<400;j++){//three axis upload
-						nameValuePairs.add(new BasicNameValuePair("x[]", String.valueOf(accx[j])));
-						nameValuePairs.add(new BasicNameValuePair("y[]", String.valueOf(accy[j])));
-						nameValuePairs.add(new BasicNameValuePair("z[]", String.valueOf(accz[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyrox[]", String.valueOf(gyrox[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyroy[]", String.valueOf(gyroy[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyroz[]", String.valueOf(gyroz[j])));
-						nameValuePairs.add(new BasicNameValuePair("gyrotime[]", String.valueOf(gyrotime[j])));
-						nameValuePairs.add(new BasicNameValuePair("time[]", String.valueOf(time[j])));
+						xStr = xStr+String.valueOf(accx[j])+",";
+						yStr = yStr+String.valueOf(accy[j])+",";
+						zStr = zStr+String.valueOf(accz[j])+",";
+						gyroxStr = gyroxStr+String.valueOf(gyrox[j])+",";
+						gyroyStr = gyroyStr+String.valueOf(gyroy[j])+",";
+						gyrozStr = gyrozStr+String.valueOf(gyroz[j])+",";
+						timeStr = timeStr+String.valueOf(time[j])+",";
+						gyroTimeStr = gyroTimeStr+ String.valueOf(gyrotime[j])+",";
+//						nameValuePairs.add(new BasicNameValuePair("x[]", String.valueOf(accx[j])));
+//						nameValuePairs.add(new BasicNameValuePair("y[]", String.valueOf(accy[j])));
+//						nameValuePairs.add(new BasicNameValuePair("z[]", String.valueOf(accz[j])));
+//						nameValuePairs.add(new BasicNameValuePair("gyrox[]", String.valueOf(gyrox[j])));
+//						nameValuePairs.add(new BasicNameValuePair("gyroy[]", String.valueOf(gyroy[j])));
+//						nameValuePairs.add(new BasicNameValuePair("gyroz[]", String.valueOf(gyroz[j])));
+//						nameValuePairs.add(new BasicNameValuePair("gyrotime[]", String.valueOf(gyrotime[j])));
+//						nameValuePairs.add(new BasicNameValuePair("time[]", String.valueOf(time[j])));
 					}
+					nameValuePairs.add(new BasicNameValuePair("x", xStr));
+					nameValuePairs.add(new BasicNameValuePair("y", yStr));
+					nameValuePairs.add(new BasicNameValuePair("z", zStr));
+					nameValuePairs.add(new BasicNameValuePair("gyrox", gyroxStr));
+					nameValuePairs.add(new BasicNameValuePair("gyroy", gyroyStr));
+					nameValuePairs.add(new BasicNameValuePair("gyroz", gyrozStr));
+					nameValuePairs.add(new BasicNameValuePair("time", timeStr));
+					nameValuePairs.add(new BasicNameValuePair("gyrotime", gyroTimeStr));
+//					Log.i("motionrecord, nameValuePairs List Content",Arrays.toString( nameValuePairs.toArray()));
+//					Log.i("motionrecord, nameValuePairs List Size", String.valueOf(nameValuePairs.size()));
+//					int xc = 0;
+//					int yc = 0;
+//					int zc = 0;
+//					for(int i=0;i<nameValuePairs.size();i++){
+//						 if( nameValuePairs.get(i).getName() == "x[]")
+//							 xc++;
+//						 if( nameValuePairs.get(i).getName() == "y[]")
+//							 yc++;
+//						 if( nameValuePairs.get(i).getName() == "z[]")
+//							 zc++;
+//					}
+//					Log.i("motionrecord, x count",  String.valueOf(xc) );
+//					Log.i("motionrecord, y count",  String.valueOf(yc) );
+//					Log.i("motionrecord, z count",  String.valueOf(zc) );
+				
 					
-					
-					
+					HttpClient httpclient = new DefaultHttpClient();
+					HttpPost method = new HttpPost(ServerUrl);
 					method.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					HttpResponse response = httpclient.execute(method);
 					HttpEntity entity = response.getEntity();
-	          
+					
 					if(entity != null){
-						Log.i("wow:",EntityUtils.toString(entity));
-					}
-					else{
+						Log.i("Server Side Http Response",EntityUtils.toString(entity));
+					}else{
 						Log.i("God Damn Error: " , "No string.");
 					}
-					Log.i("Send End", "motionrecord");
+					Log.i("Moninorecord",method.getEntity().getContent().toString() );
 					
 				}catch(Exception tt){
 					Log.i("Exceptions", "Internet failure");
